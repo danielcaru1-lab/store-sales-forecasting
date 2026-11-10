@@ -1,0 +1,15 @@
+# Datos de la competencia (sujetos a las reglas de Kaggle): no se publican
+data/
+submission.csv
+*.zip
+
+# Token de la API de Kaggle
+kaggle.json
+
+# Entornos virtuales
+.venv/
+venv/
+
+# Jupyter y Python
+.ipynb_checkpoints/
+__pycache__/

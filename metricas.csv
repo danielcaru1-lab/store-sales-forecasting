@@ -1,0 +1,5 @@
+modelo,RMSLE,mejora_vs_media_28d_%
+Gradient boosting,0.3966649483223863,26.242355103511407
+Gradient boosting + regla de ceros,0.40217977954247897,25.21690285592568
+Media 28 días,0.5377950297614105,0.0
+Mismo día de la semana (4 semanas),0.5397718876586164,-0.3675857506684199

@@ -1,0 +1,5 @@
+# Archivos ignorados por git que se copian a cada worktree nuevo (sintaxis de .gitignore)
+# No incluyo credenciales como kaggle.json
+
+# Datos de la competencia de Kaggle
+data/
