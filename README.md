@@ -5,7 +5,11 @@
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat&logo=scikitlearn&logoColor=white)
 ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=flat&logo=jupyter&logoColor=white)
 
-Proyecto de series de tiempo con los datos de la competencia de Kaggle [Store Sales - Time Series Forecasting](https://www.kaggle.com/competitions/store-sales-time-series-forecasting). Predigo las ventas diarias de cada familia de producto en cada tienda de Favorita durante los **16 días** siguientes al último día de entrenamiento, y evalúo con la métrica de la competencia, **RMSLE**.
+## Problema de negocio
+
+Una cadena de supermercados con 54 tiendas tiene que decidir cuánto pedir de cada familia de producto para las próximas dos semanas. Si pide de más, se queda con inventario parado y merma en perecederos; si pide de menos, hay quiebres de stock y ventas perdidas.
+
+Este proyecto predice las ventas diarias de cada familia de producto en cada tienda durante los **16 días** siguientes, para apoyar esa decisión de reabastecimiento. Uso los datos de la competencia de Kaggle [Store Sales - Time Series Forecasting](https://www.kaggle.com/competitions/store-sales-time-series-forecasting) (cadena Favorita, Ecuador) y evalúo con su métrica, **RMSLE**.
 
 ## Resultados
 
@@ -26,6 +30,29 @@ Validación sobre los últimos 16 días de entrenamiento (31 de julio al 15 de a
 ![Predicción vs. realidad](imagenes/prediccion_vs_real.png)
 
 ![Importancia de variables](imagenes/importancia_variables.png)
+
+## Dónde falla el modelo
+
+![Error por familia](imagenes/error_por_familia.png)
+
+- **Funciona mejor en los productos de consumo diario:** `GROCERY I`, `DAIRY`, `PRODUCE` y `BREAD/BAKERY` quedan cerca de 0,15 de RMSLE. Son las familias de mayor volumen y con patrones más estables.
+- **Falla más en familias de venta esporádica o estacional:** `SCHOOL AND OFFICE SUPPLIES` (cerca de 0,68), `LINGERIE` y `GROCERY II` (cerca de 0,60). Mi hipótesis para los útiles escolares es la temporada de regreso a clases, que cae en la ventana de validación y que los rezagos de las semanas anteriores no anticipan; no lo he comprobado.
+- **El error bajo de `BOOKS` es engañoso:** casi no tiene ventas, así que predecir cerca de cero acierta sin que el modelo haya aprendido nada útil.
+
+## Limitaciones
+
+- **Una sola ventana de validación.** El error en Kaggle (0,4376) fue un 10 % mayor que el de validación (0,3967). Con varias ventanas en distintas épocas del año tendría una estimación más realista y su variabilidad.
+- **RMSLE no es una métrica de negocio.** Penaliza errores relativos, así que una familia pequeña pesa tanto como una grande. Para decidir pedidos haría falta medir el error en unidades y, sobre todo, el costo distinto de quedarse corto o pasarse.
+- **No modelo eventos atípicos.** El terremoto de abril de 2016 está dentro del periodo de entrenamiento y no lo trato de forma especial.
+- **Hiperparámetros sin ajustar.** Usé una configuración razonable y no hice búsqueda, para no sobreajustar a una única ventana.
+- **Un solo modelo global.** No probé modelos por familia ni por tienda, que podrían ayudar justo donde hoy falla.
+
+## Si esto fuera a producción
+
+- **Reentrenamiento:** semanal, con los datos más recientes, porque los rezagos y las medias móviles dependen de las últimas semanas.
+- **Monitoreo:** comparar cada semana el error real contra el de las reglas simples, por familia y por tienda. Si el modelo deja de superar a la media de 28 días en una familia, esa familia vuelve a la regla simple hasta revisar la causa.
+- **Alertas de datos:** días sin registros, tiendas nuevas o familias que cambian de nivel de golpe, que son los casos donde los rezagos dejan de ser confiables.
+- **Uso por parte del negocio:** el pronóstico sería un insumo para el pedido sugerido, no el pedido final; faltaría sumarle inventario disponible, tiempos de entrega y stock de seguridad.
 
 ## Enfoque
 
